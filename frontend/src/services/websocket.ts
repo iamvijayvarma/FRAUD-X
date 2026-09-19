@@ -14,11 +14,15 @@ class WebSocketClient {
   private currentStatus: ConnectionStatus = 'OFFLINE';
 
   constructor() {
-    // Connect via Vite proxy or fallback directly to 8000
-    const isHttps = window.location.protocol === 'https:';
-    const host = window.location.hostname;
-    // Connect to port 8000 directly or via proxy
-    this.url = `${isHttps ? 'wss:' : 'ws:'}//${host}:8000/ws/live`;
+    const envWsUrl = import.meta.env.VITE_WS_URL;
+    if (envWsUrl) {
+      this.url = envWsUrl;
+    } else {
+      // Connect via Vite proxy or fallback directly to 8000 for local development
+      const isHttps = window.location.protocol === 'https:';
+      const host = window.location.hostname;
+      this.url = `${isHttps ? 'wss:' : 'ws:'}//${host}:8000/ws/live`;
+    }
   }
 
   public connect() {
